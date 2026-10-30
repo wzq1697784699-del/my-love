@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>送给你的特别惊喜</title>
+    <!-- 微信分享优化 -->
+    <meta name="description" content="这有一份专属你的心意，请查收 ✨">
+    <meta property="og:title" content="送给你的特别惊喜">
+    <meta property="og:description" content="点击开启这份温暖的小礼物 🎁">
+    <meta property="og:type" content="website">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        body {
+            background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .heart {
+            position: absolute;
+            background-color: #ff4081;
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            transform: rotate(-45deg);
+            opacity: 0.6;
+            pointer-events: none;
+            filter: drop-shadow(0 0 5px rgba(255, 64, 129, 0.5));
+        }
+        .heart:before, .heart:after {
+            content: "";
+            background-color: #ff4081;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            position: absolute;
+        }
+        .heart:before { top: -10px; left: 0; }
+        .heart:after { left: 10px; top: 0; }
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(-45deg) scale(1); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(-100vh) rotate(135deg) scale(0.5); opacity: 0; }
+        }
+        .floating-heart {
+            animation: float 8s linear infinite;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="flex flex-col items-center justify-center min-h-screen p-6 text-center relative overflow-hidden">
+        <!-- 浮动的心形背景 -->
+        <div v-for="h in hearts" :key="h.id" class="heart floating-heart" 
+             :style="{ left: h.left + 'px', bottom: '-50px', animationDuration: h.duration + 's', animationDelay: h.delay + 's' }"></div>
+
+        <div class="z-10 glass-card p-10 rounded-[2.5rem] shadow-[0_20px_50px_rgba(255,182,193,0.3)] animate__animated animate__zoomIn max-w-sm w-full">
+            <div class="mb-6">
+                <span class="text-6xl inline-block animate__animated animate__pulse animate__infinite">💖</span>
+            </div>
+            
+            <h1 class="text-3xl font-extrabold text-pink-600 mb-6 tracking-tight">专属惊喜已送达</h1>
+            
+            <div class="mb-8">
+                <p class="text-gray-600 leading-relaxed">{{ message }}</p>
+            </div>
+
+            <div class="space-y-4">
+                <button @click="showSurprise" 
+                        class="w-full bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white font-bold py-4 px-8 rounded-2xl transition duration-300 transform hover:-translate-y-1 active:scale-95 shadow-lg flex items-center justify-center space-x-2">
+                    <span>{{ revealed ? '再来一次！' : '点我开启惊喜' }}</span>
+                    <span class="text-xl">✨</span>
+                </button>
+                
+                <div v-if="revealed" class="animate__animated animate__fadeIn">
+                    <div class="p-4 bg-pink-50 rounded-2xl text-pink-600 font-medium italic">
+                        "生活虽然平淡，但你值得所有的浪漫。"
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-10 text-pink-700/50 text-xs tracking-widest uppercase animate__animated animate__fadeIn">
+            Powered by Love & Trae
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        const { createApp, ref, onMounted } = Vue;
+
+        createApp({
+            setup() {
+                const message = ref("这是一个为你准备的小礼物，希望能给你带来一点点温暖。");
+                const revealed = ref(false);
+                const hearts = ref([]);
+
+                const generateHearts = () => {
+                    for (let i = 0; i < 20; i++) {
+                        hearts.value.push({
+                            id: i,
+                            left: Math.random() * window.innerWidth,
+                            duration: 6 + Math.random() * 6,
+                            delay: Math.random() * 5
+                        });
+                    }
+                };
+
+                const showSurprise = () => {
+                    revealed.value = true;
+                    confetti({
+                        particleCount: 150,
+                        spread: 70,
+                        origin: { y: 0.6 },
+                        colors: ['#ff4081', '#f8bbd0', '#ffffff']
+                    });
+                };
+
+                onMounted(() => {
+                    generateHearts();
+                });
+
+                return {
+                    message,
+                    revealed,
+                    hearts,
+                    showSurprise
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
